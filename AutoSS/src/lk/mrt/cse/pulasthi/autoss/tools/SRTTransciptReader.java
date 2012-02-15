@@ -11,6 +11,11 @@ import edu.ucsb.nmsl.tools.Caption;
 import edu.ucsb.nmsl.tools.Transcript;
 import edu.ucsb.nmsl.tools.TranscriptFileReader;
 
+/**
+ * Reads the srt files and prepare them to the further processes
+ * @author Pulasthi Mahawithana <pulasthi7@gmail.com>
+ *
+ */
 public class SRTTransciptReader implements TranscriptFileReader {
 
 	@Override
@@ -21,6 +26,9 @@ public class SRTTransciptReader implements TranscriptFileReader {
 			StringBuilder textChunk = new StringBuilder();
 			String lineRead = sc.nextLine();	//ignored : the incrementing identifier
 			lineRead = sc.nextLine();	//ignored : the timestamp
+			String[] spTimestamps = lineRead.split("-->");
+			int startTime = buildIntTimeStamp(spTimestamps[0]);
+			int endTime = buildIntTimeStamp(spTimestamps[1]);
 			while(!(lineRead=sc.nextLine()).equals("")){
 				textChunk.append(lineRead);
 			}
@@ -31,7 +39,7 @@ public class SRTTransciptReader implements TranscriptFileReader {
 			if (words.length>0) {
 				Caption newCaption = new Caption();
 				for (int i = 0; i < words.length; i++) {
-					newCaption.appendCaption(-1.0, -1.0, words[i]);
+					newCaption.appendCaption(startTime, endTime, words[i]);
 				}
 				transcipt.add(newCaption);
 			}
@@ -44,4 +52,18 @@ public class SRTTransciptReader implements TranscriptFileReader {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Get the no of seconds from start given the timestamp hh:mm:ss
+	 * @param timestamp Timestamp
+	 * @return No of seconds from start
+	 */
+	private int buildIntTimeStamp(String timestamp) {
+		timestamp = timestamp.trim();
+		String[] splittedTimestamp = timestamp.split("\\D");
+		int time = 0;
+		time += 3600 * Integer.parseInt(splittedTimestamp[0]);
+		time += 60 * Integer.parseInt(splittedTimestamp[1]);
+		time += Integer.parseInt(splittedTimestamp[2]);
+		return time;
+	}
 }
