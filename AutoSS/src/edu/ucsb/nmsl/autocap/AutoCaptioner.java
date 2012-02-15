@@ -111,7 +111,7 @@ public class AutoCaptioner {
 			URL audioURL = new File(media).toURI().toURL();
 
 			// Configure Sphinx based on the config file
-			URL configURL = new URL("file:./config.xml");
+			URL configURL = new URL("file:./config/config.xml");
 
 			ConfigurationManager cm = new ConfigurationManager(configURL);
 			Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
@@ -160,8 +160,6 @@ public class AutoCaptioner {
 			String output = new String();
 
 			System.out.print("\nExtracting text from media file: ");
-
-			PrintWriter pw = new PrintWriter("Recognized.txt");
 			// Continue processing file until all the audio has been processed.
 			// Another kludge, it's not to easy to tell when and
 			// AudioInputStream
@@ -188,9 +186,10 @@ public class AutoCaptioner {
 					++count;
 				}
 			} catch (IOException i) {
-				pw.close();
+				System.out.println();
 				System.out.println("Starting Syncronisation....");
 				//TODO: Call syncronizer here
+				syncronizer.getSyncronizedTranscipt();
 				System.out.println(output + " Done.\n");
 					
 			}
