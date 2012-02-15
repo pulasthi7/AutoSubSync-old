@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+
+import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptWriter;
 import edu.cmu.sphinx.result.Result;
 import edu.ucsb.nmsl.tools.Transcript;
 
@@ -63,9 +65,13 @@ public class Synchronizer {
 	public Transcript getSyncronizedTranscipt() {
 		// TODO:remove tempory call
 		try {
-			OutputStream os = new FileOutputStream("detected.txt");
-			printDetected(os);
-			os.close();
+			OutputStream dos = new FileOutputStream("detected.txt");
+			printDetected(dos);
+			dos.close();
+			SRTTransciptWriter stw = new SRTTransciptWriter();
+			OutputStream oos = new FileOutputStream("original.txt"); 
+			stw.writeTranscript(original, oos);
+			oos.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
