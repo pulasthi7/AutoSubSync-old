@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="/media/d/Documents/Projects/Eclipse/AutoCap-src/lib/HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar"/>
-	<classpathentry kind="lib" path="/media/d/Documents/Projects/Eclipse/AutoCap-src/lib/jmf.jar"/>
-	<classpathentry kind="lib" path="/media/d/Documents/Projects/Eclipse/AutoCap-src/lib/jsapi.jar"/>
-	<classpathentry kind="lib" path="/media/d/Documents/Projects/Eclipse/AutoCap-src/lib/sphinx4.jar"/>
+	<classpathentry kind="lib" path="lib/HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar"/>
+	<classpathentry kind="lib" path="lib/jmf.jar"/>
+	<classpathentry kind="lib" path="lib/jsapi.jar"/>
+	<classpathentry kind="lib" path="lib/sphinx4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
