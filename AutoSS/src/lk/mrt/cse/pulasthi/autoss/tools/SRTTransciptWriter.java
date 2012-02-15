@@ -11,6 +11,11 @@ import edu.ucsb.nmsl.tools.Caption;
 import edu.ucsb.nmsl.tools.Transcript;
 import edu.ucsb.nmsl.tools.TranscriptFileWriter;
 
+/**
+ * Write the transcript to a file in srt format
+ * @author Pulasthi Mahawithana <pulasthi7@gmail.com>
+ *
+ */
 public class SRTTransciptWriter implements TranscriptFileWriter {
 
 	@Override
@@ -28,9 +33,16 @@ public class SRTTransciptWriter implements TranscriptFileWriter {
 		      pw.println();
 		      counter++;
 	      }
+		pw.flush();
+		pw.close();
 	}
 	
-	protected String createTimeString(int value)
+	/**
+	 * Create formatted timestamp from the elapsed seconds
+	 * @param value Elapsed seconds
+	 * @return Formatted timestamp hh:mm:ss,000)
+	 */
+	private String createTimeString(int value)
 	  {
 	    int sec = value % 60;
 	    int min = (value / 60) % 60;
