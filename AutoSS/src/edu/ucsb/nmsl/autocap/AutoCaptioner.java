@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Iterator;
@@ -48,7 +49,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import lk.mrt.cse.pulasthi.autoss.sync.Syncronizer;
+import lk.mrt.cse.pulasthi.autoss.sync.Synchronizer;
 import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptReader;
 import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptWriter;
 
@@ -81,7 +82,7 @@ import edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel;
  */
 public class AutoCaptioner {
 	
-	private Syncronizer syncronizer;
+	private Synchronizer synchronizer;
 
 	/**
 	 * This default constructor creates a default instance of AutoCaptioner.
@@ -97,9 +98,7 @@ public class AutoCaptioner {
 	 *            The file location of the media that is to be aligned with its
 	 *            transcript.
 	 * @param subFile
-	 *            The XML file containing the transcript. See the documentation
-	 *            for the class QADTranscriptFileWriter for details on the file
-	 *            format for captions used in AutoCap.
+	 *            The SRT file containing the Subtitles.
 	 * 
 	 */
 	public void start(String media, String subFile) {
@@ -150,8 +149,10 @@ public class AutoCaptioner {
 					.lookup("streamDataSource");
 			reader.setInputStream(ais, audioURL.getFile());
 
-			syncronizer = new Syncronizer();
-			// TODO : Read from the SRT reader and store them to use later
+			synchronizer = new Synchronizer();
+			InputStream subFileIS = new FileInputStream(subFile);
+			TranscriptFileReader subReader = new SRTTransciptReader();
+			synchronizer.setOriginal(subReader.readTranscript(subFileIS));
 
 			double totalBytes = ais.available();
 			final String backspaces = "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b";
@@ -169,13 +170,7 @@ public class AutoCaptioner {
 					Result res = recognizer.recognize();
 					int recognizedAt = (int) (audioLen * (1.0 - (ais
 							.available() / totalBytes)));
-//					String rec_s = String.format("%2d", recognizedAt % 60);
-//					String min = String.format("%2d", (recognizedAt / 60) % 60);
-//					String hr = String.format("%2d", recognizedAt / 3600);
-//					pw.println(hr + ":" + min + ":" + rec_s + " ==> "
-//							+ res.getBestFinalResultNoFiller());
-//					pw.flush();
-					syncronizer.addDetectedResult(res, recognizedAt);
+					synchronizer.addDetectedResult(res, recognizedAt);
 					System.out.print(backspaces.substring(0, output.length()));
 					output = new String(
 							(int) (100.0 * (1.0 - (ais.available() / totalBytes)))
@@ -189,7 +184,7 @@ public class AutoCaptioner {
 				System.out.println();
 				System.out.println("Starting Syncronisation....");
 				//TODO: Call syncronizer here
-				syncronizer.getSyncronizedTranscipt();
+				synchronizer.getSyncronizedTranscipt();
 				System.out.println(output + " Done.\n");
 					
 			}
