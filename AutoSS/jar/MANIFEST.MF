@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: edu.ucsb.nmsl.autocap.AutoCaptioner
+Class-Path: ../bin/Tools.jar ../lib/spinx4.jar ../lib/jsapi.jar ../lib/jmf.jar ../lib
+ /HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar
