@@ -39,19 +39,15 @@ package edu.ucsb.nmsl.autocap;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.net.URL;
-import java.util.Iterator;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import lk.mrt.cse.pulasthi.autoss.sync.Synchronizer;
 import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptReader;
-import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptWriter;
 
 import edu.ucsb.nmsl.tools.*;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
@@ -60,7 +56,6 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.decoder.search.PartitionActiveListFactory;
-import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel;
 

@@ -341,7 +341,7 @@ public class Caption
    */
   public double getTime()
   {
-    return ((CaptionChunk)captions.getFirst()).getStartTime();
+    return captions.getFirst().getStartTime();
   }
 
   /**
@@ -354,7 +354,7 @@ public class Caption
    */
   public void setStartTime(double time)
   {
-    ((CaptionChunk)captions.getFirst()).setStartTime(time);
+    captions.getFirst().setStartTime(time);
   }
 
   /**
@@ -367,7 +367,7 @@ public class Caption
    */
   public void setFinishTime(double time)
   {
-    ((CaptionChunk)captions.getLast()).setFinishTime(time);
+    captions.getLast().setFinishTime(time);
   }
 
   /**
@@ -380,7 +380,7 @@ public class Caption
    */
   public double getFinishTime()
   {
-    return ((CaptionChunk)captions.getLast()).getFinishTime();
+    return captions.getLast().getFinishTime();
   }
 
   /**
@@ -393,7 +393,7 @@ public class Caption
    */
   public double getMaxError()
   {
-    return ((CaptionChunk)captions.getFirst()).getMaxError();
+    return captions.getFirst().getMaxError();
   }
 
   /**
@@ -405,7 +405,7 @@ public class Caption
    */
   public void setMaxError(double d)
   {
-    ((CaptionChunk)captions.getFirst()).setMaxError(d);
+    captions.getFirst().setMaxError(d);
   }
 
   /**
@@ -418,7 +418,7 @@ public class Caption
    */
   public CaptionChunk getFirstChunk()
   {
-    return (CaptionChunk)captions.getFirst();
+    return captions.getFirst();
   }
 
   /**
@@ -431,7 +431,7 @@ public class Caption
    */
   public CaptionChunk getLastChunk()
   {
-    return (CaptionChunk)captions.getLast();
+    return captions.getLast();
   }
 
   /**
@@ -455,7 +455,7 @@ public class Caption
    * @return An Iterator for sequential sequential access to each caption chunk.
    *
    */
-  public Iterator iterator()
+  public Iterator<CaptionChunk> iterator()
   {
     return captions.iterator();
   }
@@ -469,7 +469,7 @@ public class Caption
    * @return An Iterator for sequential sequential access to each caption chunk.
    *
    */
-  public ListIterator listIterator(int idx)
+  public ListIterator<CaptionChunk> listIterator(int idx)
   {
     return captions.listIterator(idx);
   }
@@ -491,7 +491,7 @@ public class Caption
   protected StringBuffer caption;
 
   /** A list of each caption chunk that makes up the entire caption */
-  protected LinkedList captions = new LinkedList();
+  protected LinkedList<CaptionChunk> captions = new LinkedList<CaptionChunk>();
 
   /** Multiplication factors for parsing a time from a string. */
   protected static final double factors[] = {3600, 60, 1};

@@ -13,11 +13,12 @@ import edu.cmu.sphinx.result.Result;
 import edu.ucsb.nmsl.tools.Transcript;
 
 /**
- * The Synchronizer is the Class which compare the original subtitle file with the 
- * results from speech recognition and create the result file with timestamps
- * corrected in the source file. 
+ * The Synchronizer is the Class which compare the original subtitle file with
+ * the results from speech recognition and create the result file with
+ * timestamps corrected in the source file.
+ * 
  * @author Pulasthi Mahawithana <pulasthi7@gmail.com>
- *
+ * 
  */
 public class Synchronizer {
 
@@ -30,20 +31,27 @@ public class Synchronizer {
 	}
 
 	/**
-	 * Adds a detected text phrase from audio to Detected text list 
-	 * @param res The Result from the recognizer
-	 * @param recognizedAt The approx. time in seconds(from the start) the result was detected
+	 * Adds a detected text phrase from audio to Detected text list
+	 * 
+	 * @param res
+	 *            The Result from the recognizer
+	 * @param recognizedAt
+	 *            The approx. time in seconds(from the start) the result was
+	 *            detected
 	 */
 	public void addDetectedResult(Result res, int recognizedAt) {
 		if (!"".equals(res.getBestFinalResultNoFiller())) {
-			detected.add(new ResultChunk(recognizedAt, res.getBestFinalResultNoFiller()));
-		} else if(!"".equals(res.getBestResultNoFiller())){
-			detected.add(new ResultChunk(recognizedAt, res.getBestResultNoFiller()));
+			detected.add(new ResultChunk(recognizedAt, res
+					.getBestFinalResultNoFiller()));
+		} else if (!"".equals(res.getBestResultNoFiller())) {
+			detected.add(new ResultChunk(recognizedAt, res
+					.getBestResultNoFiller()));
 		}
 	}
 
 	/**
 	 * Gets the original transcript
+	 * 
 	 * @return the original transcript
 	 */
 	public Transcript getOriginal() {
@@ -52,7 +60,9 @@ public class Synchronizer {
 
 	/**
 	 * Set the Original Transcript
-	 * @param original the original transcript
+	 * 
+	 * @param original
+	 *            the original transcript
 	 */
 	public void setOriginal(Transcript original) {
 		this.original = original;
@@ -60,6 +70,7 @@ public class Synchronizer {
 
 	/**
 	 * Gets the Corrected Transcript
+	 * 
 	 * @return the corrected transcript
 	 */
 	public Transcript getSyncronizedTranscipt() {
@@ -69,7 +80,7 @@ public class Synchronizer {
 			printDetected(dos);
 			dos.close();
 			SRTTransciptWriter stw = new SRTTransciptWriter();
-			OutputStream oos = new FileOutputStream("original.txt"); 
+			OutputStream oos = new FileOutputStream("original.txt");
 			stw.writeTranscript(original, oos);
 			oos.close();
 		} catch (FileNotFoundException e) {
@@ -82,26 +93,32 @@ public class Synchronizer {
 
 	/**
 	 * Print detected results to a output stream. Used for testing purposes
-	 * @param os The output Stream to which detected text is written
+	 * 
+	 * @param os
+	 *            The output Stream to which detected text is written
 	 */
 	public void printDetected(OutputStream os) {
 		PrintWriter pw = new PrintWriter(os);
 		for (int i = 0; i < detected.size(); i++) {
-			pw.println(formatTimeStamp(detected.get(i).getDetectedAt()) +" ==> "+detected.get(i).getDetectedString());
+			pw.println(formatTimeStamp(detected.get(i).getDetectedAt())
+					+ " ==> " + detected.get(i).getDetectedString());
 		}
 		pw.flush();
 		pw.close();
 	}
-	
+
 	/**
 	 * Convert the time(in seconds from start) to a formatted string.
-	 * @param timeInSec The time in seconds from start
+	 * 
+	 * @param timeInSec
+	 *            The time in seconds from start
 	 * @return Formatted Timestamp hh:mm:ss
 	 */
 	private String formatTimeStamp(int timeInSec) {
-		int sec = timeInSec%60;
-		int min = (timeInSec/60)%60;
-		int hr = timeInSec/3600;
-		return String.format("%2d", hr) + ":" + String.format("%2d", min) + ":" + String.format("%2d", sec);
+		int sec = timeInSec % 60;
+		int min = (timeInSec / 60) % 60;
+		int hr = timeInSec / 3600;
+		return String.format("%2d", hr) + ":" + String.format("%2d", min) + ":"
+				+ String.format("%2d", sec);
 	}
 }

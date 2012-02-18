@@ -2,10 +2,7 @@ package lk.mrt.cse.pulasthi.autoss.tools;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import org.w3c.dom.Element;
+import java.util.ListIterator;
 
 import edu.ucsb.nmsl.tools.Caption;
 import edu.ucsb.nmsl.tools.Transcript;
@@ -22,7 +19,7 @@ public class SRTTransciptWriter implements TranscriptFileWriter {
 	public void writeTranscript(Transcript t, OutputStream out) {
 		int counter = 1;
 		PrintWriter pw = new PrintWriter(out);
-		for(Iterator i = t.captionIterator(0); i.hasNext(); )
+		for(ListIterator<Caption> i = t.captionIterator(0); i.hasNext(); )
 	      {
 		      Caption cap = (Caption)i.next();
 		      pw.println(counter);

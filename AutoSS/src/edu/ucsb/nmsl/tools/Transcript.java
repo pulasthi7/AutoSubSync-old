@@ -41,6 +41,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import edu.ucsb.nmsl.tools.Caption.CaptionChunk;
+
 /**
 
  <p>This class represents the basic abstraction of a Transcript: a collection of
@@ -85,7 +87,7 @@ public class Transcript
  @version 1.0
  
 */
-  protected class TranscriptIterator implements ListIterator
+  protected class TranscriptIterator implements ListIterator<CaptionChunk>
   {
     /** Index of the current word in the current segment in the transcript. */
     protected int Index = 0;
@@ -117,7 +119,7 @@ public class Transcript
 
 
      */
-    public TranscriptIterator(ListIterator i, int index)
+    public TranscriptIterator(ListIterator<Caption> i, int index)
     {
       currCaption = i;
       nextCaptionWord();
@@ -140,7 +142,7 @@ public class Transcript
 
 
      */
-    public Object next()
+    public CaptionChunk next()
     {
       ++Index;
 
@@ -164,7 +166,7 @@ public class Transcript
 
 
      */
-    public Object previous()
+    public CaptionChunk previous()
     {
       --Index;
 
@@ -268,7 +270,7 @@ public class Transcript
 
 
      */
-    public void add(Object o)
+    public void add(CaptionChunk o)
     {
       currWord.add(o);
     }
@@ -293,7 +295,7 @@ public class Transcript
 
 
      */
-    public void set(Object o)
+    public void set(CaptionChunk o)
     {
       currWord.set(o);
     }
@@ -316,7 +318,7 @@ public class Transcript
 
       Direction = FORWARD;
 
-      Caption cap = (Caption)currCaption.next();
+      Caption cap = currCaption.next();
       currWord    = cap.listIterator(0);
     }
 
@@ -334,20 +336,20 @@ public class Transcript
       Caption cap = null;
       if(Direction == FORWARD)
       {
-	      cap = (Caption)currCaption.previous();
+	      cap = currCaption.previous();
       }
 
       Direction = BACKWARD;
 
       if(currCaption.hasPrevious())
       {
-	      cap = (Caption)currCaption.previous();
+	      cap = currCaption.previous();
       }
       currWord    = cap.listIterator(cap.size());
     }
 
-    protected ListIterator currCaption;
-    protected ListIterator currWord;
+    protected ListIterator<Caption> currCaption;
+    protected ListIterator<CaptionChunk> currWord;
   }
 
   /**
@@ -371,7 +373,7 @@ public class Transcript
 
 
    */
-  public Transcript(Collection c)
+  public Transcript(Collection<Caption> c)
   {
     captions.addAll(c);
   }
@@ -387,7 +389,7 @@ public class Transcript
 
 
    */
-  public Iterator iterator()
+  public Iterator<CaptionChunk> iterator()
   {
     return new TranscriptIterator(captions.listIterator(0), 0);
   }
@@ -405,7 +407,7 @@ public class Transcript
 
 
    */
-  public ListIterator chunkIterator(int index)
+  public ListIterator<CaptionChunk> chunkIterator(int index)
   {
     return new TranscriptIterator(captions.listIterator(0), index);
   }
@@ -424,7 +426,7 @@ public class Transcript
 
 
    */
-  public ListIterator captionIterator(int index)
+  public ListIterator<Caption> captionIterator(int index)
   {
     return captions.listIterator(index);
   }
@@ -456,7 +458,7 @@ public class Transcript
    */
   public Caption getCaption(int i)
   {
-    return (Caption)captions.get(i);
+    return captions.get(i);
   }
 
   /**
@@ -472,7 +474,7 @@ public class Transcript
   public String getAsText()
   {
     StringBuffer buf = new StringBuffer();
-    for(Iterator i = chunkIterator(0); i.hasNext();)
+    for(Iterator<CaptionChunk> i = chunkIterator(0); i.hasNext();)
     {
       buf.append(((Caption.CaptionChunk)i.next()).getCaption() + " ");
     }
@@ -482,82 +484,6 @@ public class Transcript
 
 
   /** The individual segments, or caption, that make up the Transcript.  */
-  protected LinkedList captions = new LinkedList();
+  protected LinkedList<Caption> captions = new LinkedList<Caption>();
 
-
-  /**
-   
-   This main method is for testing purposes only. It is not needed during the
-   normal execution of AutoCap.
-   
-
-
-   */
-  public static void main(String args[])
-  {
-    String caps1[] = "1 2 3 4".split("\\s+");
-    Caption cap = new Caption();
-    for(int i = 0; i < caps1.length; ++i)
-    {
-      cap.appendCaption(-1.0, -1.0, caps1[i]);
-    }
-
-    LinkedList li = new LinkedList();
-    li.add(cap);
-
-    String caps2[] = "A B C D E".split("\\s+");
-    cap = new Caption();
-    for(int i = 0; i < caps2.length; ++i)
-    {
-      cap.appendCaption(-1.0, -1.0, caps2[i]);
-    }
-
-    li.add(cap);
-    Transcript t = new Transcript(li);
-
-
-    ListIterator l = t.chunkIterator(0);
-
-    Caption.CaptionChunk c = (Caption.CaptionChunk)l.next();
-    System.out.println("next: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.next();
-    System.out.println("next: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.next();
-    System.out.println("next: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.next();
-    System.out.println("next: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.next();
-    System.out.println("next: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.previous();
-    System.out.println("prev: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.previous();
-    System.out.println("prev: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.previous();
-    System.out.println("prev: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.next();
-    System.out.println("next: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.next();
-    System.out.println("next: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.next();
-    System.out.println("next: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.next();
-    System.out.println("next: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.next();
-    System.out.println("next: " + c.getCaption());
-
-    c = (Caption.CaptionChunk)l.next();
-    System.out.println("next: " + c.getCaption());
-  }
 }
