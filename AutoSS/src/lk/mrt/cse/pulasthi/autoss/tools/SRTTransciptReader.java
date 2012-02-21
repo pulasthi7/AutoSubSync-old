@@ -25,7 +25,7 @@ public class SRTTransciptReader implements TranscriptFileReader {
 		while (sc.hasNextLine()) {
 			StringBuilder textChunk = new StringBuilder();
 			String lineRead = sc.nextLine();	//ignored : the incrementing identifier
-			lineRead = sc.nextLine();	//ignored : the timestamp
+			lineRead = sc.nextLine();
 			String[] spTimestamps = lineRead.split("-->");
 			int startTime = buildIntTimeStamp(spTimestamps[0]);
 			int endTime = buildIntTimeStamp(spTimestamps[1]);
@@ -38,8 +38,10 @@ public class SRTTransciptReader implements TranscriptFileReader {
 					split("\\s+");
 			if (words.length>0) {
 				Caption newCaption = new Caption();
+				int approxWordSpan = (endTime - startTime)/words.length;
 				for (int i = 0; i < words.length; i++) {
-					newCaption.appendCaption(startTime, endTime, words[i]);
+					int wordStart = startTime + i*approxWordSpan;
+					newCaption.appendCaption(wordStart, wordStart+approxWordSpan, words[i]);
 				}
 				transcipt.add(newCaption);
 			}
