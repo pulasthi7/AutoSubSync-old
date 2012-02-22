@@ -1,14 +1,10 @@
 package lk.mrt.cse.pulasthi.autoss.sync;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptWriter;
 import edu.cmu.sphinx.result.Result;
 import edu.ucsb.nmsl.tools.Transcript;
 
@@ -73,22 +69,13 @@ public class Synchronizer {
 	 * 
 	 * @return the corrected transcript
 	 */
+	
 	public Transcript getSyncronizedTranscipt() {
-		// TODO:remove tempory call
-		try {
-			OutputStream dos = new FileOutputStream("detected.txt");
-			printDetected(dos);
-			dos.close();
-			SRTTransciptWriter stw = new SRTTransciptWriter();
-			OutputStream oos = new FileOutputStream("original.txt");
-			stw.writeTranscript(original, oos);
-			oos.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return getSyncronizedTranscipt(new DefaultSyncStratergy());
+	}
+	
+	private Transcript getSyncronizedTranscipt(SyncStratergy str) {		
+		return str.getSyncrosizedTranscript(original, detected);
 	}
 
 	/**
