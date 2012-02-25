@@ -31,7 +31,6 @@ public class SRTTransciptWriter implements TranscriptFileWriter {
 		      counter++;
 	      }
 		pw.flush();
-		pw.close();
 	}
 	
 	/**
