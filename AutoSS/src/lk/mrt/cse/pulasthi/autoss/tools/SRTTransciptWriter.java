@@ -43,12 +43,20 @@ public class SRTTransciptWriter implements TranscriptFileWriter {
 	    int sec = value % 60;
 	    int min = (value / 60) % 60;
 	    int hr  = value / 3600;
-	    
-	    String formattedHr = String.format("%d", hr);
-	    String formattedMin = String.format("%2d", min);
-	    String formattedSec = String.format("%d", sec);
+	    String fmtHr = ""+hr;
+	    String fmtMin = ""+min;
+	    String fmtSec = "" + sec;
+	    if(hr<10){
+	    	fmtHr = "0"+hr;
+	    }
+	    if(min<10){
+	    	fmtMin = "0"+min;
+	    }
+	    if(sec<10){
+	    	fmtSec = "0"+sec;
+	    }
 
-	    return formattedHr+":"+formattedMin+":"+formattedSec+","+"000";
+	    return fmtHr+":"+fmtMin+":"+fmtSec+","+"000";
 	  }
 
 }
