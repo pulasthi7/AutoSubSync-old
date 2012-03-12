@@ -39,8 +39,10 @@ package edu.ucsb.nmsl.autocap;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -48,6 +50,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import lk.mrt.cse.pulasthi.autoss.sync.Synchronizer;
 import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptReader;
+import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptWriter;
 
 import edu.ucsb.nmsl.tools.*;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
@@ -175,11 +178,15 @@ public class AutoCaptioner {
 					System.out.print(output);
 					++count;
 				}
-			} catch (IOException i) {
+			} finally {
 				System.out.println();
 				System.out.println("Starting Syncronisation....");
 				//TODO: Call syncronizer here
-				synchronizer.getSyncronizedTranscipt();
+				Transcript corrected = synchronizer.getSyncronizedTranscipt();
+				File oldSub = new File(subFile);
+				oldSub.renameTo(new File(subFile+".bak"));
+				OutputStream newFileOS = new FileOutputStream(subFile);
+				new SRTTransciptWriter().writeTranscript(corrected, newFileOS);
 				System.out.println(output + " Done.\n");
 					
 			}
