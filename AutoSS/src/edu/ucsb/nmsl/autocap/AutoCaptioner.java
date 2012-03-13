@@ -104,7 +104,22 @@ public class AutoCaptioner {
 			// Set up the media file
 			if (media == null)
 				return;
-
+			
+			File mediaFile = new File(media);
+			if(!mediaFile.exists()){
+				return;
+			}
+			System.out.println("Waiting for the conversion to be finished");
+			long mediaSize, newLen;
+			do {
+				mediaSize = mediaFile.length();
+				Thread.sleep(1000);
+				newLen = mediaFile.length();
+			} while (newLen>mediaSize);
+			
+			System.out.println("Conversion Finished!!! Detecting");
+			
+			
 			URL audioURL = new File(media).toURI().toURL();
 
 			// Configure Sphinx based on the config file
@@ -153,12 +168,9 @@ public class AutoCaptioner {
 			synchronizer.setOriginal(subReader.readTranscript(subFileIS));
 
 			double totalBytes = ais.available();
-			final String backspaces = "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b";
-			final String spinner = "-\\|/";
-			int count = 0;
 			String output = new String();
 
-			System.out.print("\nExtracting text from media file: ");
+			System.out.println("\nExtracting text from media file: ");
 			// Continue processing file until all the audio has been processed.
 			// Another kludge, it's not to easy to tell when and
 			// AudioInputStream
@@ -169,19 +181,15 @@ public class AutoCaptioner {
 					int recognizedAt = (int) (audioLen * (1.0 - (ais
 							.available() / totalBytes)));
 					synchronizer.addDetectedResult(res, recognizedAt);
-					System.out.print(backspaces.substring(0, output.length()));
 					output = new String(
 							(int) (100.0 * (1.0 - (ais.available() / totalBytes)))
-									+ "% of audio processed "
-									+ spinner.substring(count % 4,
-											(count % 4) + 1));
-					System.out.print(output);
-					++count;
+									+ "% of audio processed ");
+					System.out.println(output);
 				}
 			} finally {
 				System.out.println();
 				System.out.println("Starting Syncronisation....");
-				//TODO: Call syncronizer here
+				//Call synchronizer
 				Transcript corrected = synchronizer.getSyncronizedTranscipt();
 				File oldSub = new File(subFile);
 				oldSub.renameTo(new File(subFile+".bak"));
@@ -217,7 +225,7 @@ public class AutoCaptioner {
 	 * 
 	 * @param args
 	 *            Array of strings passed from the command line. args[0]
-	 *            contains the name of the media file that contains human speeh.
+	 *            contains the name of the media file that contains human speech.
 	 *            args[1] the name of the SRT file that contains the transcript.
 	 * 
 	 */
