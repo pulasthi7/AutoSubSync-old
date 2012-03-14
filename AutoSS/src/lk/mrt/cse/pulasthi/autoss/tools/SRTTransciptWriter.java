@@ -40,6 +40,9 @@ public class SRTTransciptWriter implements TranscriptFileWriter {
 	 */
 	private String createTimeString(int value)
 	  {
+		if(value<0){
+			return "00:00:00,000";
+		}
 	    int sec = value % 60;
 	    int min = (value / 60) % 60;
 	    int hr  = value / 3600;
