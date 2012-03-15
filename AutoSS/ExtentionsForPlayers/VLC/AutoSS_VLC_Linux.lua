@@ -29,7 +29,7 @@ function deactivate()
     
 end
 
--- UI Variables
+-- Main UI Variables
 main_ui = nil
 btn_start = nil
 btn_cancel = nil
@@ -47,6 +47,7 @@ txt_end_min = nil
 txt_end_sec = nil
 lbl_advanced = nil
 
+
 --other variables
 
 temp_output = nil
@@ -55,7 +56,7 @@ range_to = nil
 memory = nil
 
 function create_main_ui()
-	main_ui = vlc.dialog("Auto Sub Sync")	--the dialog box
+	main_ui = vlc.dialog("Auto Sub Sync")
 	title_string = "<center style=\"font-size:18px;font-weight:bold;color:white;background-color:black;\">".."Auto Sub Sync".."</center>"
 	lbl_title = main_ui:add_label(title_string,1,1,4,4)
 	lbl_description = main_ui:add_label("This extension synchronizes the subtitles of a media file with the voice detected from the media file",1,5,4,2)
@@ -77,8 +78,9 @@ function close()
 end
 
 function show_about_ui()
---TODO implement the ui
+	os.execute("xdg-open "..vlc.misc.homedir().."/.autoss/manuals/About.html")	--OS dependent
 end
+
 
 function prepare_ui_for_sync()
 	if lbl_description then main_ui:del_widget(lbl_description) end
@@ -100,7 +102,6 @@ function sync_start()
 	local item = vlc.input.item()
 	if item == nil then return false end
 	media_path = item:uri()
-	--TODO Following should be changed
 	temp_output = vlc.misc.homedir().."/.autoss/tools/temp/out.wav"
 	vlc.playlist.pause()
 	update_info("Transcoding...")
@@ -113,11 +114,14 @@ end
 function call_sync()
 	autoss_home = vlc.misc.homedir().."/.autoss"
 	--FIXME The subtitle file is assumed to have the same name(and path) of the media file
-	--FIXME The name of the media file is assumed to have no '.'s other than the one before the extension 
-	sub_file = string.gsub(media_path, "%.%w*", ".srt")
-	--FIXME conversion from URI to path is done by taking the substring from 8 to end. use a proper method instead
-	process_call = autoss_home.."/init.sh "..autoss_home.." "..temp_output.." "..string.sub (sub_file, 8).." "..tostring(memory)
-	update_info(process_call)
+	--FIXME The name of the media file is assumed to have no '.'s other than the one before the extension
+	sub_file = string.sub(media_path, 8)
+	sub_file = string.gsub(sub_file,"%%20"," ")
+	sub_file = sub_file:reverse()
+	sub_file = string.gsub(sub_file,"%w*%.","",1)
+	sub_file = sub_file:reverse()
+	sub_file = sub_file..".srt"
+	process_call = autoss_home.."/init.sh \""..autoss_home.."\" \""..temp_output.."\" \""..sub_file.."\" "..tostring(memory)
 	autoss = io.popen(process_call)
 	repeat
   		line = autoss:read ("*l") -- read one line
