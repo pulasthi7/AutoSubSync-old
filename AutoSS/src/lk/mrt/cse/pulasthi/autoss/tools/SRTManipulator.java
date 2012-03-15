@@ -1,6 +1,5 @@
 package lk.mrt.cse.pulasthi.autoss.tools;
 
-import java.util.Iterator;
 import java.util.ListIterator;
 
 import edu.ucsb.nmsl.tools.Caption;

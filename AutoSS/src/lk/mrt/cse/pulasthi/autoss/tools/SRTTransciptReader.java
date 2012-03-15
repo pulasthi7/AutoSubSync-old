@@ -30,7 +30,7 @@ public class SRTTransciptReader implements TranscriptFileReader {
 			int startTime = buildIntTimeStamp(spTimestamps[0]);
 			int endTime = buildIntTimeStamp(spTimestamps[1]);
 			while(!(lineRead=sc.nextLine()).equals("")){
-				textChunk.append(lineRead);
+				textChunk.append(" "+lineRead);
 			}
 			String[] words = textChunk.toString().
 					replaceAll("[#$%&()*+\\-,./:;<=>?@[\\\\]]", " ").

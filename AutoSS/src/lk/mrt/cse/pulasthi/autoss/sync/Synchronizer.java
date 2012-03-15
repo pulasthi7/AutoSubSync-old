@@ -19,7 +19,6 @@ import edu.ucsb.nmsl.tools.Transcript;
 public class Synchronizer {
 
 	private Transcript original;
-	private Transcript syncronized;
 	private List<ResultChunk> detected;
 
 	public Synchronizer() {

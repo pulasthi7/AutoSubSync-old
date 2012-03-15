@@ -194,9 +194,7 @@ public class AutoCaptioner {
 				File oldSub = new File(subFile);
 				oldSub.renameTo(new File(subFile+".bak"));
 				OutputStream newFileOS = new FileOutputStream(subFile);
-				new SRTTransciptWriter().writeTranscript(corrected, newFileOS);
-				System.out.println(output + " Done.\n");
-					
+				new SRTTransciptWriter().writeTranscript(corrected, newFileOS);					
 			}
 
 		} catch (IOException e) {
