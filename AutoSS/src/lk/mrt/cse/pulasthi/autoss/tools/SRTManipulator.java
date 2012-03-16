@@ -10,8 +10,8 @@ public class SRTManipulator {
 	public void shift(Transcript t, int time) {
 		for (ListIterator<Caption> i = t.captionIterator(0); i.hasNext();) {
 			Caption cap = i.next();
-			cap.setStartTime(cap.getTime() + time);
-			cap.setFinishTime(cap.getFinishTime() + time);
+			cap.setStartTime(cap.getTime() + time + 1);
+			cap.setFinishTime(cap.getFinishTime() + time + 1);
 		}
 	}
 
