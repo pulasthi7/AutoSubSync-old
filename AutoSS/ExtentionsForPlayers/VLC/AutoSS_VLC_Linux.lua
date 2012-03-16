@@ -9,8 +9,8 @@
 
 
 function descriptor()
-    return { title = "Auto Sub Sync 0.2" ;
-             version = "0.2" ;
+    return { title = "Auto Sub Sync 0.3" ;
+             version = "0.3" ;
              author = "Pulasthi Mahawithana" ;
              url = 'http://pulasthi7.blogspot.com';
              shortdesc = "Synchronize subtitles with the Audio";
