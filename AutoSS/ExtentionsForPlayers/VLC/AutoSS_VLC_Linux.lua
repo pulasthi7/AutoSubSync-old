@@ -108,7 +108,6 @@ function sync_start()
 	temp_output = vlc.misc.homedir().."/.autoss/tools/temp/out.wav"
 	vlc.playlist.pause()
 	transcode()
-	update_info(media_path.."\n"..temp_output)
 	call_sync()
 	vlc.playlist.stop()
 end
@@ -116,14 +115,13 @@ end
 function call_sync()
 	autoss_home = vlc.misc.homedir().."/.autoss"
 	--FIXME The subtitle file is assumed to have the same name(and path) of the media file
-	--FIXME The name of the media file is assumed to have no '.'s other than the one before the extension
-	sub_file = string.sub(media_path, 8)
-	sub_file = string.gsub(sub_file,"%%20"," ")
+	sub_file = media_path
 	sub_file = sub_file:reverse()
 	sub_file = string.gsub(sub_file,"%w*%.","",1)
 	sub_file = sub_file:reverse()
 	sub_file = sub_file..".srt"
-	process_call = autoss_home.."/init.sh \""..autoss_home.."\" \""..temp_output.."\" \""..sub_file.."\" "..tostring(memory)
+	--FIXME In the following line the temp_output is converted into a URI by adding "file://" at start. Need to fix for a standard way
+	process_call = autoss_home.."/init.sh \""..autoss_home.."\" \"file://"..temp_output.."\" \""..sub_file.."\" "..tostring(memory)
 	autoss = io.popen(process_call)
 	repeat
   		line = autoss:read ("*l") -- read one line
