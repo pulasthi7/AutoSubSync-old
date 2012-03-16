@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.URL;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -105,7 +106,7 @@ public class AutoCaptioner {
 			if (media == null)
 				return;
 			
-			File mediaFile = new File(media);
+			File mediaFile = new File(new URI(media));
 			if(!mediaFile.exists()){
 				return;
 			}
@@ -120,7 +121,7 @@ public class AutoCaptioner {
 			System.out.println("Audio extracted. Preparing to detect voice...");
 			
 			
-			URL audioURL = new File(media).toURI().toURL();
+			URL audioURL = new URI(media).toURL();
 
 			// Configure Sphinx based on the config file
 			URL configURL = new URL("file:./config/config.xml");
@@ -163,7 +164,8 @@ public class AutoCaptioner {
 			reader.setInputStream(ais, audioURL.getFile());
 
 			synchronizer = new Synchronizer();
-			InputStream subFileIS = new FileInputStream(subFile);
+			URI subURI = new URI(subFile);
+			InputStream subFileIS = new FileInputStream(new File(subURI));
 			TranscriptFileReader subReader = new SRTTransciptReader();
 			synchronizer.setOriginal(subReader.readTranscript(subFileIS));
 
@@ -191,9 +193,10 @@ public class AutoCaptioner {
 				System.out.println("Starting Syncronisation....");
 				//Call synchronizer
 				Transcript corrected = synchronizer.getSyncronizedTranscipt();
-				File oldSub = new File(subFile);
-				oldSub.renameTo(new File(subFile+".bak"));
-				OutputStream newFileOS = new FileOutputStream(subFile);
+				File oldSub = new File(subURI);
+				File subBakFile = new File(oldSub.getAbsolutePath()+".bak");
+				oldSub.renameTo(new File(subURI+".bak"));
+				OutputStream newFileOS = new FileOutputStream(subBakFile);
 				new SRTTransciptWriter().writeTranscript(corrected, newFileOS);					
 			}
 
