@@ -32,7 +32,7 @@ public class DefaultSyncStratergy implements SyncStratergy {
 		compareDetected();
 		SRTManipulator mani = new SRTManipulator();
 		mani.shift(ori, shift);
-		System.out.println("Corrected by "+shift+ "seconds");
+		System.out.println("Corrected (shifted "+shift+ " seconds)");
 		return ori;
 	}
 	

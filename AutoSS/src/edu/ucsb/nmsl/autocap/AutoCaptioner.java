@@ -109,7 +109,7 @@ public class AutoCaptioner {
 			if(!mediaFile.exists()){
 				return;
 			}
-			System.out.println("Waiting for the conversion to be finished");
+			System.out.println("Extracting the audio track...");
 			long mediaSize, newLen;
 			do {
 				mediaSize = mediaFile.length();
@@ -117,7 +117,7 @@ public class AutoCaptioner {
 				newLen = mediaFile.length();
 			} while (newLen>mediaSize);
 			
-			System.out.println("Conversion Finished!!! Detecting");
+			System.out.println("Audio extracted. Preparing to detect voice...");
 			
 			
 			URL audioURL = new File(media).toURI().toURL();
@@ -170,7 +170,7 @@ public class AutoCaptioner {
 			double totalBytes = ais.available();
 			String output = new String();
 
-			System.out.println("\nExtracting text from media file: ");
+			System.out.println("Extracting text from media file...");
 			// Continue processing file until all the audio has been processed.
 			// Another kludge, it's not to easy to tell when and
 			// AudioInputStream
