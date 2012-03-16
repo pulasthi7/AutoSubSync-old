@@ -98,13 +98,15 @@ end
 function sync_start()
 	if tonumber(txt_memory:get_text())>512 then memory = tonumber(txt_memory:get_text()) else memory = 512 end
 	range_to = tonumber(txt_end_hr:get_text())*3600 + tonumber(txt_end_min:get_text())*60 + tonumber(txt_end_sec:get_text())
+	if not range_to then range_to = 600 end		--set to a default of 10 mins if not set
+	if range_to<300 then range_to = 300 end		--lowerbound by 300	to increase accuracy
+	if range_to>1800 then range_to = 1800 end	--upperbound by 1800 to increase performance
 	prepare_ui_for_sync()
 	local item = vlc.input.item()
 	if item == nil then return false end
 	media_path = item:uri()
 	temp_output = vlc.misc.homedir().."/.autoss/tools/temp/out.wav"
 	vlc.playlist.pause()
-	update_info("Transcoding...")
 	transcode()
 	update_info(media_path.."\n"..temp_output)
 	call_sync()
@@ -143,6 +145,7 @@ function transcode()
 	vl_manager = vlc.vlm()
 	vl_manager:execute_command("new con broadcast enabled")
 	vl_manager:execute_command("setup con input '"..media_path.."'")
+	vl_manager:execute_command("setup con option stop-time="..range_to)	
 	vl_manager:execute_command("setup con output #transcode{vcodec=none,acodec=s16l,ab=16,channels=1,samplerate=16000}:file{dst="..temp_output.."}")
 	vl_manager:execute_command("control con play") 
 end
