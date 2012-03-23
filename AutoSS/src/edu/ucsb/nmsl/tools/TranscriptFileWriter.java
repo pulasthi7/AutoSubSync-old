@@ -1,4 +1,5 @@
 package edu.ucsb.nmsl.tools;
+
 //   Copyright (C) 2005 The Regents of the University of California.
 //   All Rights Reserved.
 //
@@ -36,36 +37,28 @@ package edu.ucsb.nmsl.tools;
 //   BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE
 //   MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-
-
 import java.io.OutputStream;
 import edu.ucsb.nmsl.tools.Transcript;
 
 /**
- 
- This class was created to allow for the easy integration of many file formats
- for specifying captions. The responsibility of any class implementing this
- interface is to take a Transcript object and write the captions along with 
- their time-stamp to a file or stream. The output can then be used to display
- captioned media.
- 
-
- @version 1.0
- 
+ * This class was created to allow for the easy integration of many file formats
+ * for specifying captions. The responsibility of any class implementing this
+ * interface is to take a Transcript object and write the captions along with
+ * their time-stamp to a file or stream. The output can then be used to display
+ * captioned media.
+ * 
+ * @version 1.0
  */
-public interface TranscriptFileWriter
-{
-
-  /**
-  
-   This method accepts a Transcript object in order for the caption and time-
-   stamps to be written to an OutputStream.
-  
-   @param t - A Transcript instance to be written.
-   @param out - An OutputStream instance to write the Transcript instance to.
-  
-
-  
-   */
-  public void writeTranscript(Transcript t, OutputStream out);
+public interface TranscriptFileWriter {
+	/**
+	 * This method accepts a Transcript object in order for the caption and
+	 * time-stamps to be written to an OutputStream.
+	 * 
+	 * @param t
+	 *            - A Transcript instance to be written.
+	 * @param out
+	 *            - An OutputStream instance to write the Transcript instance
+	 *            to.
+	 */
+	public void writeTranscript(Transcript t, OutputStream out);
 }

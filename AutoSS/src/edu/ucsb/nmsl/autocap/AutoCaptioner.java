@@ -53,15 +53,13 @@ import lk.mrt.cse.pulasthi.autoss.sync.Synchronizer;
 import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptReader;
 import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptWriter;
 
-import edu.ucsb.nmsl.tools.*;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.decoder.search.PartitionActiveListFactory;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel;
+import edu.ucsb.nmsl.tools.Transcript;
+import edu.ucsb.nmsl.tools.TranscriptFileReader;
 
 /**
  * This class contains all the logic for AutoCap. AutoCap is an application for
@@ -80,14 +78,17 @@ import edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel;
  * 
  */
 public class AutoCaptioner {
-	
-	private Synchronizer synchronizer;
 
-	/**
-	 * This default constructor creates a default instance of AutoCaptioner.
-	 * 
-	 */
-	public AutoCaptioner() {
+	private void waitForConversion(final File mediaFile)
+			throws InterruptedException {
+		System.out.println("Extracting the audio track...");
+		long mediaSize, newLen;
+		do {
+			mediaSize = mediaFile.length();
+			Thread.sleep(1000);
+			newLen = mediaFile.length();
+		} while (newLen > mediaSize);
+		System.out.println("Audio extracted.");
 	}
 
 	/**
@@ -100,77 +101,44 @@ public class AutoCaptioner {
 	 *            The SRT file containing the Subtitles.
 	 * 
 	 */
-	public void start(String media, String subFile) {
+	public void start(final String media, final String subFile) {
 		try {
-			// Set up the media file
-			if (media == null)
-				return;
-			
-			File mediaFile = new File(new URI(media));
-			if(!mediaFile.exists()){
-				return;
-			}
-			System.out.println("Extracting the audio track...");
-			long mediaSize, newLen;
-			do {
-				mediaSize = mediaFile.length();
-				Thread.sleep(1000);
-				newLen = mediaFile.length();
-			} while (newLen>mediaSize);
-			
-			System.out.println("Audio extracted. Preparing to detect voice...");
-			
-			
-			URL audioURL = new URI(media).toURL();
+			final File mediaFile = new File(new URI(media));
+			waitForConversion(mediaFile);
+			System.out.println("Preparing to detect voice...");
+
+			final URL audioURL = new URI(media).toURL();
 
 			// Configure Sphinx based on the config file
-			URL configURL = new URL("file:./config/config.xml");
+			final URL configURL = new URL("file:./config/config.xml");
 
-			ConfigurationManager cm = new ConfigurationManager(configURL);
-			Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
-			PropertySheet activeListProperties = cm
-					.getPropertySheet("activeList");
-			PropertySheet trigramModelProperties = cm
-					.getPropertySheet("trigramModel");
+			final ConfigurationManager configManager = new ConfigurationManager(
+					configURL);
+			final Recognizer recognizer = (Recognizer) configManager
+					.lookup("recognizer");
 
 			/* allocate the resource necessary for the recognizer */
 			recognizer.allocate();
 
-			AudioInputStream ais = AudioSystem.getAudioInputStream(audioURL);
+			final AudioInputStream ais = AudioSystem
+					.getAudioInputStream(audioURL);
 
-			System.out
-					.println("-----------------------------------------------------");
+			System.out.println("---Media Infomation---");
 			System.out.println("Media File: \t" + audioURL.toString());
 			System.out.println("Media Format:\t" + ais.getFormat().toString());
-			float audioLen = ais.getFrameLength()
+			final float audioLen = ais.getFrameLength()
 					/ ais.getFormat().getFrameRate();
 			System.out.println("Media Length: \t" + audioLen + " s");
-
-			System.out.println();
-
-			System.out.println("Config File: \t" + configURL.toString());
-			System.out
-					.println("ABW Setting: \t"
-							+ activeListProperties
-									.getRaw(PartitionActiveListFactory.PROP_ABSOLUTE_BEAM_WIDTH));
-			System.out.println("Language Model:\t"
-					+ trigramModelProperties
-							.getRaw(SimpleNGramModel.PROP_LOCATION));
-
-			System.out
-					.println("-----------------------------------------------------");
-			StreamDataSource reader = (StreamDataSource) cm
+			System.out.println("----------------------");
+			final StreamDataSource reader = (StreamDataSource) configManager
 					.lookup("streamDataSource");
 			reader.setInputStream(ais, audioURL.getFile());
 
-			synchronizer = new Synchronizer();
-			URI subURI = new URI(subFile);
-			InputStream subFileIS = new FileInputStream(new File(subURI));
-			TranscriptFileReader subReader = new SRTTransciptReader();
+			final Synchronizer synchronizer = new Synchronizer();
+			final URI subURI = new URI(subFile);
+			final InputStream subFileIS = new FileInputStream(new File(subURI));
+			final TranscriptFileReader subReader = new SRTTransciptReader();
 			synchronizer.setOriginal(subReader.readTranscript(subFileIS));
-
-			double totalBytes = ais.available();
-			String output = new String();
 
 			System.out.println("Extracting text from media file...");
 			// Continue processing file until all the audio has been processed.
@@ -178,46 +146,44 @@ public class AutoCaptioner {
 			// AudioInputStream
 			// is done, so we loop until it throws an IOException
 			try {
+				Result res;
+				int recognizedAt;
+				String output;
+				final double totalBytes = ais.available();
 				while (ais.available() > 0) {
-					Result res = recognizer.recognize();
-					int recognizedAt = (int) (audioLen * (1.0 - (ais
-							.available() / totalBytes)));
+					res = recognizer.recognize();
+					recognizedAt = (int) (audioLen * (1.0 - (ais.available() / totalBytes)));
 					synchronizer.addDetectedResult(res, recognizedAt);
-					output = new String(
-							(int) (100.0 * (1.0 - (ais.available() / totalBytes)))
-									+ "% of audio processed ");
+					output = (int) (100.0 * (1.0 - (ais.available() / totalBytes)))
+							+ "% of audio processed ";
 					System.out.println(output);
 				}
+			} catch (IOException e) {
+				System.out.println("Recognization Completed");
 			} finally {
-				System.out.println();
 				System.out.println("Starting Syncronisation....");
-				//Call synchronizer
-				Transcript corrected = synchronizer.getSyncronizedTranscipt();
-				File oldSub = new File(subURI);
-				File subBakFile = new File(oldSub.getAbsolutePath()+".bak");
-				oldSub.renameTo(new File(subURI+".bak"));
-				OutputStream newFileOS = new FileOutputStream(subBakFile);
-				new SRTTransciptWriter().writeTranscript(corrected, newFileOS);					
+				// Call synchronizer
+				final Transcript corrected = synchronizer
+						.getSyncronizedTranscipt();
+				final File oldSub = new File(subURI);
+				final File newSubFile = new File(oldSub.getAbsolutePath());
+				oldSub.renameTo(new File(subURI + ".bak"));
+				final OutputStream newFileOS = new FileOutputStream(newSubFile);
+				new SRTTransciptWriter().writeTranscript(corrected, newFileOS);
 			}
 
 		} catch (IOException e) {
 			System.err.println("Problem when loading AutoCaptioner: " + e);
-			e.printStackTrace();
 		} catch (PropertyException e) {
 			System.err.println("Problem configuring AutoCaptioner: " + e);
-			e.printStackTrace();
 		} catch (InstantiationException e) {
 			System.err.println("Problem creating AutoCaptioner: " + e);
-			e.printStackTrace();
 		} catch (UnsupportedAudioFileException e) {
 			System.err.println("Audio file format not supported.");
-			e.printStackTrace();
 		} catch (Exception e) {
 			System.err.println("Caught " + e);
-			e.printStackTrace();
 		}
 	}
-
 
 	/**
 	 * This method is the main method for running the AutoCap application. It is
@@ -226,20 +192,14 @@ public class AutoCaptioner {
 	 * 
 	 * @param args
 	 *            Array of strings passed from the command line. args[0]
-	 *            contains the name of the media file that contains human speech.
-	 *            args[1] the name of the SRT file that contains the transcript.
+	 *            contains the name of the media file that contains human
+	 *            speech. args[1] the name of the SRT file that contains the
+	 *            transcript.
 	 * 
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		// Create and start the transcriber.
-		AutoCaptioner trans = new AutoCaptioner();
-
-		System.out
-				.println("\n=====================================================");
-		System.out
-				.println("=                 Aligning Captions                 =");
-		System.out
-				.println("=====================================================\n");
+		final AutoCaptioner trans = new AutoCaptioner();
 		trans.start(args[0], args[1]);
 	}
 }

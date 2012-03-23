@@ -36,463 +36,488 @@
 //   MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 package edu.ucsb.nmsl.tools;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 
 /**
- *
- * <p>This class represents the basic components of a Transcritp, captions. For 
- * the purposes of AutoCap, a caption is defined as a segment of a transcript 
- * that has a time-stamp. The purpose of this time stamp is to mark the point in 
- * time that the beginning of a caption was spoken. Furthermore, these captions
- * may represent different levels of organization within the transcript. For
+ * 
+ * <p>
+ * This class represents the basic components of a Transcritp, captions. For the
+ * purposes of AutoCap, a caption is defined as a segment of a transcript that
+ * has a time-stamp. The purpose of this time stamp is to mark the point in time
+ * that the beginning of a caption was spoken. Furthermore, these captions may
+ * represent different levels of organization within the transcript. For
  * example, the transcripts for QAD Inc.'s media materials represented groups of
  * related sentences. The number of these sentences is usually between two and
- * three. Other levels of organization are also possible to use such as 
+ * three. Other levels of organization are also possible to use such as
  * sentences or parts of sentences. It is not the responsibility of the Caption
- * or Transcript classes to segment the transcripts. The organization of 
- * transcripts is expressed within the transcript files themselves.<p>
- *
- * <p>Each Caption object is responsible for storing and providing acess to both
+ * or Transcript classes to segment the transcripts. The organization of
+ * transcripts is expressed within the transcript files themselves.
+ * <p>
+ * 
+ * <p>
+ * Each Caption object is responsible for storing and providing acess to both
  * the text of the caption and a time-stamp. Each caption is further broken into
  * caption chunks. The size of these chunks is one word per chunk. Furthermore,
  * each chunk keeps the time-stamp of when the word begins and ends withing the
- * media file. This organization of captions allows for the user of the class
- * to iterate through each word of the caption which facilitates the estimation
+ * media file. This organization of captions allows for the user of the class to
+ * iterate through each word of the caption which facilitates the estimation
  * phase of the AutoCap process. Specialized instances of this class may choose
- * a different level of organization.</p>
- *
+ * a different level of organization.
+ * </p>
+ * 
  * see edu.ucsb.nmsl.tools.Transcript Transcript
- *
+ * 
  * @author Allan Knight
  * @version 1.0
- *
+ * 
  */
-public class Caption
-{
-  /**
-   * This inner class is responsible for storing the individual caption chunks
-   * that make up a caption. This implementation defines a caption chunk as a 
-   * word.
-   *
-   * @see edu.ucsb.nmsl.tools.Caption Caption
-   *
-   * @author Allan Knight
-   * @version 1.0
-   *
-   */
-  public class CaptionChunk
-  {
-    /** The text of the caption */
-    protected String caption;
+public class Caption {
+	/**
+	 * This inner class is responsible for storing the individual caption chunks
+	 * that make up a caption. This implementation defines a caption chunk as a
+	 * word.
+	 * 
+	 * @see edu.ucsb.nmsl.tools.Caption Caption
+	 * 
+	 * @author Allan Knight
+	 * @version 1.0
+	 * 
+	 */
+	public class CaptionChunk {
+		/** The text of the caption */
+		protected String caption;
 
-    /** The time-stamp that indicates when the start of the caption chunk 
-        occured in the media file. */
-    protected double startTime  = -1.0;
+		/**
+		 * The time-stamp that indicates when the start of the caption chunk
+		 * occured in the media file.
+		 */
+		protected double startTime = -1.0;
 
-    /** The time-stamp that indicates when the end of the caption chunk 
-        occured in the media file. */
-    protected double finishTime = -1.0;
+		/**
+		 * The time-stamp that indicates when the end of the caption chunk
+		 * occured in the media file.
+		 */
+		protected double finishTime = -1.0;
 
-    /** The estimated maximum error for the start of the word. See the research
-        paper associated with this work for more information */
-    protected double maxError   =  0.0;
- 
-    /**
-     *
-     * This contructor creates a CaptionChunk instance and sets the start and
-     * finish times of the caption along with the text of the caption.
-     *
-     * @param s The start time, in seconds, of the caption.
-     * @param f The finish time, in seconds, of the caption.
-     * @param c The text of the caption, in this case a word. 
-     *
-     */
-    public CaptionChunk(double s, double f, String c)
-    {
-      startTime = s;
-      finishTime = f;
-      caption = new String(c);
-    }
+		/**
+		 * The estimated maximum error for the start of the word. See the
+		 * research paper associated with this work for more information
+		 */
+		protected double maxError = 0.0;
 
-    /**
-     *
-     * This accessor method returns the start time-stamp of the caption.
-     *
-     * @return The start time-stamp, in seconds, of the caption chunk.
-     *
-     */
-    public double getStartTime()
-    {
-      return startTime;
-    }
+		/**
+		 * 
+		 * This contructor creates a CaptionChunk instance and sets the start
+		 * and finish times of the caption along with the text of the caption.
+		 * 
+		 * @param startTime
+		 *            The start time, in seconds, of the caption.
+		 * @param finishTime
+		 *            The finish time, in seconds, of the caption.
+		 * @param captionText
+		 *            The text of the caption, in this case a word.
+		 * 
+		 */
+		public CaptionChunk(final double startTime, final double finishTime,
+				final String captionText) {
+			this.startTime = startTime;
+			this.finishTime = finishTime;
+			this.caption = captionText;
+		}
 
-    /**
-     *
-     * This accessor method returns the finish time-stamp of the caption.
-     *
-     * @return The finish time-stamp, in seconds, of the caption chunk.
-     *
-     */
-    public double getFinishTime()
-    {
-      return finishTime;
-    }
+		/**
+		 * 
+		 * This accessor method returns the start time-stamp of the caption.
+		 * 
+		 * @return The start time-stamp, in seconds, of the caption chunk.
+		 * 
+		 */
+		public double getStartTime() {
+			return startTime;
+		}
 
-    /**
-     *
-     * This accessor method returns the estimated maximum error associated with
-     * the start time-stamp of a CaptionChunk instance.
-     *
-     * @return The estimated maximum error in seconds.
-     *
-     */
-    public double getMaxError()
-    {
-      return maxError;
-    }
+		/**
+		 * 
+		 * This accessor method returns the finish time-stamp of the caption.
+		 * 
+		 * @return The finish time-stamp, in seconds, of the caption chunk.
+		 * 
+		 */
+		public double getFinishTime() {
+			return finishTime;
+		}
 
-    /**
-     * This accessor method returns the text of the caption chunk, or word.
-     *
-     * @return The caption chunk text.
-     *
-     */
-    public String getCaption()
-    {
-      return caption;
-    }
+		/**
+		 * 
+		 * This accessor method returns the estimated maximum error associated
+		 * with the start time-stamp of a CaptionChunk instance.
+		 * 
+		 * @return The estimated maximum error in seconds.
+		 * 
+		 */
+		public double getMaxError() {
+			return maxError;
+		}
 
-    /**
-     *
-     * This mutator method sets the start time-stamp associated with the caption
-     * chunk.
-     *
-     * @param t The start time-stamp of the caption chunk in seconds.
-     *
-     */
-    public void setStartTime(double t)
-    {
-      startTime = t;
-    }
+		/**
+		 * This accessor method returns the text of the caption chunk, or word.
+		 * 
+		 * @return The caption chunk text.
+		 * 
+		 */
+		public String getCaption() {
+			return caption;
+		}
 
-    /**
-     *
-     * This mutator method sets the finish time-stamp associated with the
-     * caption chunk.
-     *
-     * @param t The finish time-stamp of the caption chunk in seconds.
-     */
-    public void setFinishTime(double t)
-    {
-      finishTime = t;
-    }
+		/**
+		 * 
+		 * This mutator method sets the start time-stamp associated with the
+		 * caption chunk.
+		 * 
+		 * @param time
+		 *            The start time-stamp of the caption chunk in seconds.
+		 * 
+		 */
+		public void setStartTime(final double time) {
+			startTime = time;
+		}
 
-    /**
-     *
-     * This mutator method sets the maximum caption error associated with a 
-     * caption chunk.
-     *
-     * @param x The estimated caption error in seconds.
-     *
-     */
-    public void setMaxError(double x)
-    {
-      maxError = x;
-    }
+		/**
+		 * 
+		 * This mutator method sets the finish time-stamp associated with the
+		 * caption chunk.
+		 * 
+		 * @param time
+		 *            The finish time-stamp of the caption chunk in seconds.
+		 */
+		public void setFinishTime(final double time) {
+			finishTime = time;
+		}
 
-    /**
-     *
-     * This mutator method sets the text of the caption chunk.
-     *
-     * @param c The caption chunk, or word, as a String. 
-     *
-     */
-    public void setCaption(String c)
-    {
-      caption = new String(c);
-    }
-  }
+		/**
+		 * 
+		 * This mutator method sets the maximum caption error associated with a
+		 * caption chunk.
+		 * 
+		 * @param error
+		 *            The estimated caption error in seconds.
+		 * 
+		 */
+		public void setMaxError(final double error) {
+			maxError = error;
+		}
 
-  /**
-   *
-   * This default contructor creates a default instance of a caption with the
-   * start and finish time-stamps set to -1 and the caption text set to the
-   * empty string.
-   *
-   */
-  public Caption()
-  {
-    caption = new StringBuffer();
-  }
+		/**
+		 * 
+		 * This mutator method sets the text of the caption chunk.
+		 * 
+		 * @param captionChunk
+		 *            The caption chunk, or word, as a String.
+		 * 
+		 */
+		public void setCaption(final String captionChunk) {
+			caption = captionChunk;
+		}
+	}
 
-  /**
-   *
-   * This constructor creates an instance with the given caption text and given
-   * start time-stamp.
-   *
-   * @param t The start time-stamp associated with the caption.
-   * @param c The caption text as a String. This caption chunk should be a word. 
-   *
-   */
-  public Caption(double t, String c)
-  {
-    captions.add(new CaptionChunk(t, -1.0, c));
-    caption = new StringBuffer(c);
-  }
+	/**
+	 * 
+	 * This default contructor creates a default instance of a caption with the
+	 * start and finish time-stamps set to -1 and the caption text set to the
+	 * empty string.
+	 * 
+	 */
+	public Caption() {
+		captionBuffer = new StringBuffer();
+	}
 
-  /**
-   *
-   * This constructor creates an instance with the given caption text, given
-   * start time-stamp and given finish time-stamp.
-   *
-   * @param s The start time-stamp associated with the caption.
-   * @param f The finish time-stamp associated with the caption.
-   * @param c The caption text as a String. This caption chunk should be a word. 
-   *
-   */
-  public Caption(double s, double f, String c)
-  {
-    captions.add(new CaptionChunk(s, f, c));
-    caption = new StringBuffer(c);
-  }
+	/**
+	 * 
+	 * This constructor creates an instance with the given caption text and
+	 * given start time-stamp.
+	 * 
+	 * @param timestamp
+	 *            The start time-stamp associated with the caption.
+	 * @param captionText
+	 *            The caption text as a String. This caption chunk should be a
+	 *            word.
+	 * 
+	 */
+	public Caption(final double timestamp, final String captionText) {
+		captions.add(new CaptionChunk(timestamp, -1.0, captionText));
+		captionBuffer = new StringBuffer(captionText);
+	}
 
-  /**
-   *
-   * This contructor creates an instance with the given caption text and given
-   * start time-stamp, which is in string form. This constructor is helpful 
-   * when reading the captions from a file.
-   *
-   * @param t The start time-stamp of the caption given as a string.
-   * @param c The caption text as a String. This caption chunk should be a word.
-   *
-   */
-  public Caption(String t, String c)
-  {
-    captions.add(new CaptionChunk(parseTime(t), -1.0, c));
-    caption = new StringBuffer(c);
-  }
+	/**
+	 * 
+	 * This constructor creates an instance with the given caption text, given
+	 * start time-stamp and given finish time-stamp.
+	 * 
+	 * @param startTime
+	 *            The start time-stamp associated with the caption.
+	 * @param finishTime
+	 *            The finish time-stamp associated with the caption.
+	 * @param captionText
+	 *            The caption text as a String. This caption chunk should be a
+	 *            word.
+	 * 
+	 */
+	public Caption(final double startTime, final double finishTime, final String captionText) {
+		captions.add(new CaptionChunk(startTime, finishTime, captionText));
+		captionBuffer = new StringBuffer(captionText);
+	}
 
-  /**
-   *
-   * This contructor creates an instance with the given caption text, given
-   * start and finish time-stamps, which are in string form. This constructor is
-   * helpful when reading the captions from a file.
-   *
-   * @param s The start time-stamp of the caption given as a string.
-   * @param f The finish time-stamp of the caption given as a string.
-   * @param c The caption text as a String. This caption chunk should be a word.
-   *
-   */
-  public Caption(String s, String f, String c)
-  {
-    captions.add(new CaptionChunk(parseTime(s), parseTime(f), c));
-    caption = new StringBuffer(c);
-  }
+	/**
+	 * 
+	 * This contructor creates an instance with the given caption text and given
+	 * start time-stamp, which is in string form. This constructor is helpful
+	 * when reading the captions from a file.
+	 * 
+	 * @param startTime
+	 *            The start time-stamp of the caption given as a string.
+	 * @param captionText
+	 *            The caption text as a String. This caption chunk should be a
+	 *            word.
+	 * 
+	 */
+	public Caption(final String startTime, final String captionText) {
+		captions.add(new CaptionChunk(parseTime(startTime), -1.0, captionText)); 
+																// pulasthi on
+																// 3/23/12 9:56
+																// PM
+		captionBuffer = new StringBuffer(captionText);
+	}
 
-  /**
-   *
-   * This method is a helper function that parses a time-stamp of the form 
-   * "HH:MM:SS" from a string and returns the number of seconds rempresented by
-   * the string.
-   *
-   * @param t The time-stamp string as read from a file. 
-   *
-   * @return The number of seconds rrepresented by the time string.
-   *
-   */
-  protected double parseTime(String t)
-  {
-    double d = 0.0;
+	/**
+	 * 
+	 * This contructor creates an instance with the given caption text, given
+	 * start and finish time-stamps, which are in string form. This constructor
+	 * is helpful when reading the captions from a file.
+	 * 
+	 * @param startTime
+	 *            The start time-stamp of the caption given as a string.
+	 * @param finishTime
+	 *            The finish time-stamp of the caption given as a string.
+	 * @param captionText
+	 *            The caption text as a String. This caption chunk should be a
+	 *            word.
+	 * 
+	 */
+	public Caption(final String startTime, final String finishTime, final String captionText) {
+		captions.add(new CaptionChunk(parseTime(startTime), parseTime(finishTime), captionText)); 
+																		// by
+																		// pulasthi
+																		// on
+																		// 3/23/12
+																		// 9:56
+																		// PM
+		captionBuffer = new StringBuffer(captionText);
+	}
 
-    String parts[] = t.split(":");
-    for(int i = 0; i < parts.length; ++i)
-    {
-      d += factors[i] * Double.valueOf(parts[i]).doubleValue();
-    }
+	/**
+	 * 
+	 * This method is a helper function that parses a time-stamp of the form
+	 * "HH:MM:SS" from a string and returns the number of seconds rempresented
+	 * by the string.
+	 * 
+	 * @param timestamp
+	 *            The time-stamp string as read from a file.
+	 * 
+	 * @return The number of seconds rrepresented by the time string.
+	 * 
+	 */
+	protected double parseTime(final String timestamp) {
+		double timeValue = 0.0;
 
-    return d;
-  }
+		final String parts[] = timestamp.split(":");
+		for (int i = 0; i < parts.length; ++i) {
+			timeValue += FACTORS[i] * Double.valueOf(parts[i]);
+		}
 
-  /**
-   *
-   * This method appends another caption chunk on the end of a Caption
-   * with the given start and finish time-stamps.
-   *
-   * @param s The start time-stamp associated with the caption.
-   * @param f The finish time-stamp associated with the caption.
-   * @param c The caption text as a String. This caption chunk should be a word. 
-   *
-   */
-  public void appendCaption(double s, double f, String c)
-  {
-    captions.add(new CaptionChunk(s, f, c.toLowerCase()));
-    caption.append(c + " ");
-  }
+		return timeValue;
+	}
 
-  /**
-   *
-   * This accessor method returns the start time-stamp for the caption. This
-   * time-stamp represents the start of the caption being spoken in the media.
-   *
-   * @return The start time-stamp of the caption in seconds.
-   *
-   */
-  public double getTime()
-  {
-    return captions.getFirst().getStartTime();
-  }
+	/**
+	 * 
+	 * This method appends another caption chunk on the end of a Caption with
+	 * the given start and finish time-stamps.
+	 * 
+	 * @param startTime
+	 *            The start time-stamp associated with the caption.
+	 * @param finishTime
+	 *            The finish time-stamp associated with the caption.
+	 * @param captionText
+	 *            The caption text as a String. This caption chunk should be a
+	 *            word.
+	 * 
+	 */
+	public void appendCaption(final double startTime, final double finishTime, final String captionText) {
+		captions.add(new CaptionChunk(startTime, finishTime, captionText.toLowerCase(Locale.US)));
+		captionBuffer.append(captionText);
+		captionBuffer.append(' ');
+	}
 
-  /**
-   *
-   * This mutator method sets the start time-stamp for the caption. This
-   * time-stamp represents the start of the caption being spoken in the media.
-   *
-   * @param time The start time-stamp of the caption in seconds.
-   *
-   */
-  public void setStartTime(double time)
-  {
-    captions.getFirst().setStartTime(time);
-  }
+	/**
+	 * 
+	 * This accessor method returns the start time-stamp for the caption. This
+	 * time-stamp represents the start of the caption being spoken in the media.
+	 * 
+	 * @return The start time-stamp of the caption in seconds.
+	 * 
+	 */
+	public double getTime() {
+		return captions.get(0).getStartTime();
+	}
 
-  /**
-   *
-   * This accessor method returns the finish time-stamp for the caption. This
-   * time-stamp represents the end of the caption being spoken in the media.
-   *
-   * @param time The finish time-stamp of the caption in seconds.
-   *
-   */
-  public void setFinishTime(double time)
-  {
-    captions.getLast().setFinishTime(time);
-  }
+	/**
+	 * 
+	 * This mutator method sets the start time-stamp for the caption. This
+	 * time-stamp represents the start of the caption being spoken in the media.
+	 * 
+	 * @param time
+	 *            The start time-stamp of the caption in seconds.
+	 * 
+	 */
+	public void setStartTime(final double time) {
+		captions.get(0).setStartTime(time);
+	}
 
-  /**
-   *
-   * This mutator method sets the finish time-stamp for the caption. This
-   * time-stamp represents the end of the caption being spoken in the media.
-   *
-   * @return The finish time-stamp of the caption in seconds.
-   *
-   */
-  public double getFinishTime()
-  {
-    return captions.getLast().getFinishTime();
-  }
+	/**
+	 * 
+	 * This accessor method returns the finish time-stamp for the caption. This
+	 * time-stamp represents the end of the caption being spoken in the media.
+	 * 
+	 * @param time
+	 *            The finish time-stamp of the caption in seconds.
+	 * 
+	 */
+	public void setFinishTime(final double time) {
+		captions.get(captions.size() - 1).setFinishTime(time);
+	}
 
-  /**
-   *
-   * This accessor function returns the maximum caption error associated with
-   * the start time-stamp of the caption.
-   *
-   * @return The maximum caption error in seconds.
-   *
-   */
-  public double getMaxError()
-  {
-    return captions.getFirst().getMaxError();
-  }
+	/**
+	 * 
+	 * This mutator method sets the finish time-stamp for the caption. This
+	 * time-stamp represents the end of the caption being spoken in the media.
+	 * 
+	 * @return The finish time-stamp of the caption in seconds.
+	 * 
+	 */
+	public double getFinishTime() {
+		return captions.get(captions.size() - 1).getFinishTime();
+	}
 
-  /**
-   *
-   * This mutator method sets the maximum error associated with the caption.
-   *
-   * @param d The maximum caption error in seconds. 
-   *
-   */
-  public void setMaxError(double d)
-  {
-    captions.getFirst().setMaxError(d);
-  }
+	/**
+	 * 
+	 * This accessor function returns the maximum caption error associated with
+	 * the start time-stamp of the caption.
+	 * 
+	 * @return The maximum caption error in seconds.
+	 * 
+	 */
+	public double getMaxError() {
+		return captions.get(0).getMaxError();
+	}
 
-  /**
-   *
-   * This accessor method returns the first caption chunk, which should be a 
-   * word of the caption.
-   *
-   * @return The first caption chunk of the caption.
-   *
-   */
-  public CaptionChunk getFirstChunk()
-  {
-    return captions.getFirst();
-  }
+	/**
+	 * 
+	 * This mutator method sets the maximum error associated with the caption.
+	 * 
+	 * @param error
+	 *            The maximum caption error in seconds.
+	 * 
+	 */
+	public void setMaxError(final double error) {
+		captions.get(0).setMaxError(error);
+	}
 
-  /**
-   *
-   * This accessor method returns the last caption chunk, which should be a 
-   * word of the caption.
-   *
-   * @return The last caption chunk of the caption.
-   *
-   */
-  public CaptionChunk getLastChunk()
-  {
-    return captions.getLast();
-  }
+	/**
+	 * 
+	 * This accessor method returns the first caption chunk, which should be a
+	 * word of the caption.
+	 * 
+	 * @return The first caption chunk of the caption.
+	 * 
+	 */
+	public CaptionChunk getFirstChunk() {
+		return captions.get(0);
+	}
 
-  /**
-   *
-   * This accessor method returns the all the caption chunks as a String.
-   *
-   * @return The text of the caption.
-   *
-   */
-  public String getCaption()
-  {
-    return caption.toString();
-  }
+	/**
+	 * 
+	 * This accessor method returns the last caption chunk, which should be a
+	 * word of the caption.
+	 * 
+	 * @return The last caption chunk of the caption.
+	 * 
+	 */
+	public CaptionChunk getLastChunk() {
+		return captions.get(captions.size() - 1);
+	}
 
-  /**
-   *
-   * This method returns an Iterator that allows for the sequential access to
-   * each chunk of the caption. Since each chunk is a word, this iterator allows
-   * the caller to iterate through each word of the caption.
-   *
-   * @return An Iterator for sequential sequential access to each caption chunk.
-   *
-   */
-  public Iterator<CaptionChunk> iterator()
-  {
-    return captions.iterator();
-  }
+	/**
+	 * 
+	 * This accessor method returns the all the caption chunks as a String.
+	 * 
+	 * @return The text of the caption.
+	 * 
+	 */
+	public String getCaption() {
+		return captionBuffer.toString();
+	}
 
-  /**
-   *
-   * This method returns an Iterator that allows for the sequential access to
-   * each chunk of the caption. Since each chunk is a word, this iterator allows
-   * the caller to iterate through each word of the caption.
-   *
-   * @return An Iterator for sequential sequential access to each caption chunk.
-   *
-   */
-  public ListIterator<CaptionChunk> listIterator(int idx)
-  {
-    return captions.listIterator(idx);
-  }
+	/**
+	 * 
+	 * This method returns an Iterator that allows for the sequential access to
+	 * each chunk of the caption. Since each chunk is a word, this iterator
+	 * allows the caller to iterate through each word of the caption.
+	 * 
+	 * @return An Iterator for sequential sequential access to each caption
+	 *         chunk.
+	 * 
+	 */
+	public Iterator<CaptionChunk> iterator() {
+		return captions.iterator();
+	}
 
-  /**
-   *
-   * This method returns the number of chunks, or words in the caption.
-   *
-   * @return The number of chunks in the caption.
-   *
-   */
-  public int size()
-  {
-    return captions.size();
-  }
+	/**
+	 * 
+	 * This method returns an Iterator that allows for the sequential access to
+	 * each chunk of the caption. Since each chunk is a word, this iterator
+	 * allows the caller to iterate through each word of the caption.
+	 * 
+	 * @return An Iterator for sequential sequential access to each caption
+	 *         chunk.
+	 * 
+	 */
+	public ListIterator<CaptionChunk> listIterator(final int idx) {
+		return captions.listIterator(idx);
+	}
 
-  /** The entire text of the caption. This parameter is for speed up when 
-      returning the caption text. */
-  protected StringBuffer caption;
+	/**
+	 * 
+	 * This method returns the number of chunks, or words in the caption.
+	 * 
+	 * @return The number of chunks in the caption.
+	 * 
+	 */
+	public int size() {
+		return captions.size();
+	}
 
-  /** A list of each caption chunk that makes up the entire caption */
-  protected LinkedList<CaptionChunk> captions = new LinkedList<CaptionChunk>();
+	/**
+	 * The entire text of the caption. This parameter is for speed up when
+	 * returning the caption text.
+	 */
+	protected StringBuffer captionBuffer;
 
-  /** Multiplication factors for parsing a time from a string. */
-  protected static final double factors[] = {3600, 60, 1};
+	/** A list of each caption chunk that makes up the entire caption */
+	protected List<CaptionChunk> captions = new ArrayList<CaptionChunk>();
+
+	/** Multiplication factors for parsing a time from a string. */
+	protected static final double FACTORS[] = { 3600, 60, 1 };
 }
