@@ -18,13 +18,13 @@ public class SRTTransciptWriter implements TranscriptFileWriter {
 	public void writeTranscript(Transcript t, OutputStream out) {
 		int counter = 1;
 		PrintWriter pw = new PrintWriter(out);
-		for(ListIterator<Caption> i = t.captionIterator(0); i.hasNext(); )
+		for(ListIterator<Caption> i = t.captionIterator(); i.hasNext(); )
 	      {
 		      Caption cap = (Caption)i.next();
 		      pw.println(counter);
-		      pw.print(createTimeString((int)Math.round(cap.getTime())-1));
+		      pw.print(createTimeString(cap.getTime()));
 		      pw.print(" --> ");
-		      pw.println(createTimeString((int)Math.round(cap.getFinishTime())-1));
+		      pw.println(createTimeString(cap.getFinishTime()));
 		      pw.println(cap.getCaption());
 		      pw.println();
 		      counter++;

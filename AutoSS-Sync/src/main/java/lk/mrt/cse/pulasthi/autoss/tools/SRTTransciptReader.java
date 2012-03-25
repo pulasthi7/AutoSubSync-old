@@ -29,17 +29,14 @@ public class SRTTransciptReader implements TranscriptFileReader {
 			int startTime = buildIntTimeStamp(spTimestamps[0]);
 			int endTime = buildIntTimeStamp(spTimestamps[1]);
 			while(!(lineRead=sc.nextLine()).equals("")){
-				textChunk.append(" "+lineRead);
+				textChunk.append(" ");
+                                textChunk.append(lineRead);
 			}
-			String[] words = textChunk.toString().
+			String words = textChunk.toString().
 					replaceAll("[#$%&()*+\\-,./:;<=>?@[\\\\]]", " ").
-					replaceAll("\\s+", " ").
-					split("\\s+");
-			if (words.length>0) {
-				Caption newCaption = new Caption();
-				for (int i = 0; i < words.length; i++) {
-					newCaption.appendCaption(startTime, endTime, words[i]);
-				}
+					replaceAll("\\s+", " ").trim();
+			if (words.length()>0) {
+				Caption newCaption = new Caption(startTime, endTime, words);
 				transcipt.add(newCaption);
 			}
 		}

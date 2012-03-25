@@ -8,18 +8,20 @@ import edu.ucsb.nmsl.tools.Transcript;
 public class SRTManipulator {
 
 	public void shift(Transcript t, int time) {
-		for (ListIterator<Caption> i = t.captionIterator(0); i.hasNext();) {
+		for (ListIterator<Caption> i = t.captionIterator(); i.hasNext();) {
 			Caption cap = i.next();
-			cap.setStartTime(cap.getTime() + time + 1);
-			cap.setFinishTime(cap.getFinishTime() + time + 1);
+			cap.setStartTime(cap.getTime() + time);
+			cap.setFinishTime(cap.getFinishTime() + time);
 		}
 	}
 
 	public void scale(Transcript t, float factor) {
-		for (ListIterator<Caption> i = t.captionIterator(0); i.hasNext();) {
+		for (ListIterator<Caption> i = t.captionIterator(); i.hasNext();) {
 			Caption cap = i.next();
-			cap.setStartTime(cap.getTime() * factor);
-			cap.setFinishTime(cap.getFinishTime() * factor);
+                        float start = cap.getTime() * factor;
+			cap.setStartTime(Math.round(start));
+                        float finish = cap.getFinishTime() * factor;
+			cap.setFinishTime(Math.round(finish));
 		}
 	}
 
