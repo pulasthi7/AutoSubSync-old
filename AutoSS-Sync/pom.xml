@@ -57,7 +57,6 @@
 							<mainClass>edu.ucsb.nmsl.autocap.AutoCaptioner</mainClass>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout>
 						</manifest>
 					</archive>
 				</configuration>
