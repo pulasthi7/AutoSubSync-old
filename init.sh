@@ -17,11 +17,11 @@ MEDIA=$2
 SUBFILE=$3
 STACK_SIZE=$4
 FREQ_FILE=$AUTOSS_HOME/freq.txt
-PATH=$PATH:$AUTOSS_HOME/tools:$AUTOSS_HOME/tools/CMU_Cam_Toolkit/bin
+PATH=$PATH:$AUTOSS_HOME/tools/CMU_Cam_Toolkit/linux/bin
 #CLASSPATH=.:$PWD/lib/jmf.jar:$PWD/lib/sphinx4.jar:$PWD/lib/jsapi.jar
 cd $AUTOSS_HOME
-java -jar $AUTOSS_HOME/AutoSS-start/AutoSS-start.jar $SUBFILE
+java -jar $AUTOSS_HOME/AutoSS-start.jar $SUBFILE
 $AUTOSS_HOME/tools/mklm $FREQ_FILE
 cp $FREQ_FILE.arpa ./config/captiondata.arpa
 rm $FREQ_FILE*
-java -mx$STACK_SIZE\m -jar $AUTOSS_HOME/AutoSS/AutoSS.jar $MEDIA $SUBFILE
+java -mx$STACK_SIZE\m -jar $AUTOSS_HOME/AutoSS-Sync.jar $MEDIA $SUBFILE
