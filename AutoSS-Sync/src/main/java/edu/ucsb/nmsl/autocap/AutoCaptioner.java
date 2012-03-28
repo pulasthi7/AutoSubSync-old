@@ -178,8 +178,11 @@ public class AutoCaptioner {
     }
 
     protected void writeCorrectedToFile(final Transcript corrected, final URI oldSubURI) throws FileNotFoundException {
-        final File oldSubFile = new File(oldSubURI);
-        oldSubFile.renameTo(new File(oldSubFile.getAbsolutePath() + ".bak"));	//append .bak to old subtitle file name
+    	final File oldSubFile = new File(oldSubURI);
+    	final File bakSubFile = new File(oldSubURI.getPath()+".bak");
+    	if(!bakSubFile.exists()){		//if back up file already exists avoid replacing it.
+    		oldSubFile.renameTo(bakSubFile);	//append .bak to old subtitle file name
+    	}
         final File newSubFile = new File(oldSubURI);            		//same as the old subtitle file
         final OutputStream newFileOS = new FileOutputStream(newSubFile);
         new SRTTransciptWriter().writeTranscript(corrected, newFileOS);
