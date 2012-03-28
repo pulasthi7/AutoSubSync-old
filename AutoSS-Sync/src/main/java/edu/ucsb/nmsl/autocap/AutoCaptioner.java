@@ -81,14 +81,12 @@ public class AutoCaptioner {
 
     protected void waitForConversion(final File mediaFile)
             throws InterruptedException {
-        System.out.println("Extracting the audio track...");
         long mediaSize, newLen;
         do {
             mediaSize = mediaFile.length();
             Thread.sleep(1000);
             newLen = mediaFile.length();
         } while (newLen > mediaSize);
-        System.out.println("Audio extracted.");
     }
 
     /**
@@ -104,7 +102,10 @@ public class AutoCaptioner {
     public void start(final String media, final String subFilePath) {
         try {
             final File mediaFile = new File(new URI(media));
+            System.out.println("Extracting the audio track...");
             waitForConversion(mediaFile);
+            System.out.println("Audio extracted.");
+            
             System.out.println("Preparing to detect voice...");
 
             final URL audioURL = new URI(media).toURL();

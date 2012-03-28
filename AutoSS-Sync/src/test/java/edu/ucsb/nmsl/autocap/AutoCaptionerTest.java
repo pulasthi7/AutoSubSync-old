@@ -33,8 +33,10 @@ public class AutoCaptionerTest extends TestCase {
      * Invoke the testWait method with different values
      */
     public void testWaitForConversion() {
+    	System.out.println("Testing for wait method");
         int[] testHops = {7, 50, 21};
         for (int i = 0; i < testHops.length; i++) {
+        	System.out.println("Testing for "+testHops[i]+"00ms");
             testWait(testHops[i]);
         }
     }
@@ -89,28 +91,47 @@ public class AutoCaptionerTest extends TestCase {
      */
     public void testWriteCorrectedToFile(){
         try {
+        	System.out.println("Testing the file back up method");
             File testFile = new File("src/test/resources/sample.srt");
             File bakFile = new File("src/test/resources/sample.srt.bak");
             testFile.delete();
             bakFile.delete();
             assertFalse(testFile.exists());
             assertFalse(bakFile.exists());
+            
+            System.out.println("Testing creation of new file and backing up existing");
             Transcript testSample = loadTranscriptFrom("src/test/resources/modifiedTest.srt");
             writeTranscriptTo(testSample, testFile.getPath());
             new SRTManipulator().shift(testSample, 5);
             new AutoCaptioner().writeCorrectedToFile(testSample, testFile.toURI());
             assertTrue(testFile.exists());
             assertTrue(bakFile.exists());
+            
+            //Test whether the sample and backup files are same and the newly written and sample are not same
+            System.out.println("Test whether the sample and backup files are same and the newly written and sample are not same");
             testSample = loadTranscriptFrom("src/test/resources/modifiedTest.srt");
             Transcript backup = loadTranscriptFrom(bakFile.getPath());
             Transcript newlyWritten = loadTranscriptFrom(testFile.getAbsolutePath());
             assertNotSame(testSample, newlyWritten);
             assertEquals(testSample, backup);
+            
+            //Test whether the existing backup file is overwritten
+            System.out.println("Test whether the existing backup file is overwritten");
+            testSample = loadTranscriptFrom("src/test/resources/modifiedTest.srt");
+            writeTranscriptTo(testSample, testFile.getPath());
+            new SRTManipulator().shift(testSample, 3);
+            new AutoCaptioner().writeCorrectedToFile(testSample, testFile.toURI());
+            assertTrue(testFile.exists());
+            assertTrue(bakFile.exists());
+            Transcript currentBak = loadTranscriptFrom("src/test/resources/sample.srt.bak");
+            testSample = loadTranscriptFrom("src/test/resources/modifiedTest.srt");
+            assertEquals(currentBak, testSample);
+            System.out.println("Test for file backup method finished");
         } catch (IOException ex) {
             Logger.getLogger(AutoCaptionerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-    }
+    }    
     
     private Transcript loadTranscriptFrom(String filePath) throws IOException{
         InputStream fileIS = new FileInputStream(filePath);
