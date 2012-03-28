@@ -24,10 +24,6 @@ function activate()
 	create_main_ui()
 end
 
--- Deactivation
-function deactivate()
-    
-end
 
 -- Main UI Variables
 main_ui = nil
@@ -56,11 +52,12 @@ range_to = nil
 memory = nil
 
 function create_main_ui()
-	main_ui = vlc.dialog("Auto Sub Sync")
-	title_string = "<center style=\"font-size:18px;font-weight:bold;color:white;background-color:black;\">".."Auto Sub Sync".."</center>"
+	main_ui = vlc.dialog(" ")
+	title_string = "<center style=\"font-size:24px;font-weight:bold;font-style:italic;font-family:Verdana, Geneva, sans-serif;color:black;background-color:azure;\">".."Auto Sub Sync".."</center>"
 	lbl_title = main_ui:add_label(title_string,1,1,4,4)
-	lbl_description = main_ui:add_label("This extension synchronizes the subtitles of a media file with the voice detected from the media file",1,5,4,2)
-	lbl_advanced = main_ui:add_label("Advanced Options",1,7,2,1)
+	lbl_description = main_ui:add_label(" <br/>This extension synchronizes the subtitles of a media file" 
+		.."with the voice detected from the media file<br/> ",1,5,4,2)
+	lbl_advanced = main_ui:add_label("<center style=\"font-weight:bold;\">Advanced Options</center>",1,7,2,1)
 	lbl_memory = main_ui:add_label("Memory to use (in MB)",1,8,1,1)
 	txt_memory = main_ui:add_text_input("768",2,8,1,1)
 	lbl_range = main_ui:add_label("Range until",1,9,1,1)
@@ -105,7 +102,7 @@ function sync_start()
 	local item = vlc.input.item()
 	if item == nil then return false end
 	media_path = item:uri()
-	temp_output = vlc.misc.homedir().."/.autoss/tools/temp/out.wav"
+	temp_output = "/tmp/out.wav"
 	vlc.playlist.pause()
 	transcode()
 	call_sync()
@@ -113,7 +110,7 @@ function sync_start()
 end
 
 function call_sync()
-	autoss_home = vlc.misc.homedir().."/.autoss"
+	autoss_home = "/usr/share/auto-sub-sync"
 	--FIXME The subtitle file is assumed to have the same name(and path) of the media file
 	sub_file = media_path
 	sub_file = sub_file:reverse()
