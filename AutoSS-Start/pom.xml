@@ -5,11 +5,11 @@
   <parent>
     <artifactId>AutoSS</artifactId>
     <groupId>org.pulasthi7.autoss</groupId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.3</version>
   </parent>
   <groupId>org.pulasthi7.autoss.modules</groupId>
   <artifactId>AutoSS-Start</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <name>AutoSS-Start</name>
   <url>http://maven.apache.org</url>
   <properties>
