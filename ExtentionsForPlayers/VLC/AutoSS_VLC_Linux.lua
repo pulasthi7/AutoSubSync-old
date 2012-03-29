@@ -21,6 +21,7 @@ end
 
 -- Activation
 function activate()
+	autoss_home = "/usr/share/auto-sub-sync"
 	create_main_ui()
 end
 
@@ -46,11 +47,13 @@ lbl_advanced = nil
 
 --other variables
 
+autoss_home = nil
 temp_output = nil
 media_path = nil
 range_to = nil
 memory = nil
 
+--Create the main UI
 function create_main_ui()
 	main_ui = vlc.dialog(" ")
 	title_string = "<center style=\"font-size:24px;font-weight:bold;font-style:italic;font-family:Verdana, Geneva, sans-serif;color:black;background-color:azure;\">".."Auto Sub Sync".."</center>"
@@ -69,16 +72,18 @@ function create_main_ui()
 	btn_close = main_ui:add_button("Close",close,4,11,1,1)
 end
 
+--Close the Extension
 function close()
 	main_ui:delete()
 	deactivate()
 end
 
+--Show the Help UI
 function show_about_ui()
-	os.execute("xdg-open "..vlc.misc.homedir().."/.autoss/manuals/About.html")	--OS dependent
+	os.execute("xdg-open "..autoss_home.."/manuals/About.html")	--OS dependent
 end
 
-
+--Prepare for the syncronization
 function prepare_ui_for_sync()
 	if lbl_description then main_ui:del_widget(lbl_description) end
 	if lbl_advanced then main_ui:del_widget(lbl_advanced) end
@@ -92,6 +97,7 @@ function prepare_ui_for_sync()
 	lbl_info = main_ui:add_label("",1,5,4,5)
 end
 
+--Start the synchronization
 function sync_start()
 	if tonumber(txt_memory:get_text())>512 then memory = tonumber(txt_memory:get_text()) else memory = 512 end
 	range_to = tonumber(txt_end_hr:get_text())*3600 + tonumber(txt_end_min:get_text())*60 + tonumber(txt_end_sec:get_text())
@@ -109,8 +115,8 @@ function sync_start()
 	vlc.playlist.stop()
 end
 
+--function to call the syncronizer
 function call_sync()
-	autoss_home = "/usr/share/auto-sub-sync"
 	--FIXME The subtitle file is assumed to have the same name(and path) of the media file
 	sub_file = media_path
 	sub_file = sub_file:reverse()
@@ -129,11 +135,13 @@ function call_sync()
  	autoss:close()
 end
 
+--Update the information label with the given string
 function update_info(s)
 	lbl_info:set_text(s)
 	main_ui:update()
 end
 
+--Extract the audio track from the media
 function transcode()
 	--These calls are non blocking calls and this script doesn't wait them to finish the task
 	--FIXME Implement a mechanism to detect and wait till the command is finished.
