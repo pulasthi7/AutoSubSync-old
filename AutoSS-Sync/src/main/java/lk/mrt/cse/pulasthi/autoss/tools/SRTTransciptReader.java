@@ -19,6 +19,7 @@ import edu.ucsb.nmsl.tools.TranscriptFileReader;
 public class SRTTransciptReader implements TranscriptFileReader {
 
 	public Transcript readTranscript(InputStream in) {
+		//Documentation Inherited
 		Scanner sc = new Scanner(in);
 		List<Caption> transcipt = new ArrayList<Caption>();
 		while (sc.hasNextLine()) {
@@ -44,7 +45,7 @@ public class SRTTransciptReader implements TranscriptFileReader {
 	}
 
 	public Transcript readTranscript(Document d) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException();	//Not Supported nor needed.
 	}
 
 	/**

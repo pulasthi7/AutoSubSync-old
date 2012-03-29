@@ -45,6 +45,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -52,7 +53,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import lk.mrt.cse.pulasthi.autoss.sync.Synchronizer;
 import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptReader;
 import lk.mrt.cse.pulasthi.autoss.tools.SRTTransciptWriter;
-
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
@@ -178,6 +178,12 @@ public class AutoCaptioner {
         }
     }
 
+    /**
+     * Write the Corrected subtitle to the same original file and backup the original file appending .bak to end.
+     * @param corrected The Corrected Subtitle
+     * @param oldSubURI The URI of the original subtitle file
+     * @throws FileNotFoundException
+     */
     protected void writeCorrectedToFile(final Transcript corrected, final URI oldSubURI) throws FileNotFoundException {
     	final File oldSubFile = new File(oldSubURI);
     	final File bakSubFile = new File(oldSubURI.getPath()+".bak");

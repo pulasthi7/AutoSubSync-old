@@ -26,8 +26,7 @@ public class DefaultSyncStratergy implements SyncStratergy {
     private Map<String, WordOccurence> originalFreq;
     private Transcript original;
     private List<ResultChunk> identified;
-    private final static float AVG_WORD_TIME = 0.5f; // TODO: to be
-    // changed
+    private final static float AVG_WORD_TIME = 0.5f;
     private final static int IGNORE_MARGIN = 2;
     private int shift = 0;
 

@@ -8,6 +8,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Scanner;
 
+/**
+ * This Class extract the words from the subtitle file to generate vocabulary model
+ * @author Pulasthi Mahawithana <pulasthi7@gmail.com>
+ *
+ */
 public class Initializer {
 
 	public static void main(String[] args) {
@@ -18,7 +23,10 @@ public class Initializer {
 		initializer.start(args[0]);
 	}
 	
-	
+	/**
+	 * Extract the words from the subtitle file to generate vocabulary file.
+	 * @param subFile The URI of the subtitle file
+	 */
 	public void start(String subFile) {	
 		try {
 			File srtFile = new File(new URI(subFile));	
@@ -36,6 +44,7 @@ public class Initializer {
 				while(!(lineRead=sc.nextLine()).equals("")){
 					textChunk.append(lineRead);
 				}
+				//remove the unnecessary punctuation characters
 				String[] words = textChunk.toString().
 						replaceAll("[#$%&()*+\\-,./:;<=>?@[\\\\]]", " ").
 						replaceAll("\\s+", " ").
